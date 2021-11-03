@@ -1,5 +1,5 @@
 const axios = require('axios')
-
+const query = 'jhs morning glory'
 
 const main = async () => {
     try {
@@ -7,7 +7,7 @@ const main = async () => {
         const token = process.env.TOKEN
         const opts = {
             params: {
-                query: 'blackstar+ht5r',
+                query: query.replace(/-/g, '+'),
                 page: 1
             },
             headers: {
@@ -24,11 +24,10 @@ const main = async () => {
         let listingIds = []
         let listingsMetaData = {
             prices: [],
-            mean: 0,
             mean: 0
         }
 
-        for (let i = 1; i <= 2; i++) {
+        for (let i = 1; i <= pages; i++) {
             console.log(`Requesting page ${i}/${pages}`)
             let iRes = await axios.get(url, opts)
             iRes.data.listings.forEach((listing) => {
@@ -45,12 +44,15 @@ const main = async () => {
 
         processMetaData(listingsMetaData)
 
-        console.log(`Loaded ${listings.length} listings...`)
-        console.log(listingsMetaData)
+        const userResponse = {
+            query: query,
+            listingsCount: listings.length,
+            lowPrice: listingsMetaData.low,
+            highPrice: listingsMetaData.high,
+            adjustedMeanPrice: listingsMetaData.adjusted.mean
+        }
 
-        // const listings = res.data.listings
-
-        // console.log(listings)
+        console.log(userResponse)
 
     } catch (err) {
         console.error(err)
@@ -67,7 +69,6 @@ const processMetaData = (data) => {
     data.low = priceStats.low
     data.mean = priceStats.mean
     data.adjusted = getAdjustedPriceStats(data.prices)
-    return data
 }
 
 const getPriceStats = (arr) => {
