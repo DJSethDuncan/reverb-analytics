@@ -5,8 +5,8 @@ Put the API key in .env
 
 Modify your query in index.js
 
-`npm i`
-`npm start`
+* `npm i`
+* `npm start`
 
 # Example Output
 
